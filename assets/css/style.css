@@ -1,0 +1,214 @@
+/**
+ * WP Article Hub — Card Styles
+ *
+ * Designed to match Rostislav Peška's portfolio aesthetic:
+ * Libre Baskerville headings, Open Sans body, #019BCA accent.
+ * Self-contained — no theme dependency, works with Divi or any theme.
+ */
+
+.wah-embed {
+	max-width: 100%;
+	margin: 20px 0;
+	box-sizing: border-box;
+	font-family: "Open Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.wah-embed *,
+.wah-embed *::before,
+.wah-embed *::after {
+	box-sizing: border-box;
+}
+
+/* Grid layout */
+.wah-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 24px;
+}
+
+/* Single article layout */
+.wah-single {
+	max-width: 600px;
+}
+
+/* Card */
+.wah-card {
+	background: #ffffff;
+	border: 1px solid #e5e5e5;
+	transition: box-shadow 0.3s ease;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.wah-card:hover {
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Thumbnail */
+.wah-image {
+	width: 100%;
+	overflow: hidden;
+	background: #f5f5f5;
+	position: relative;
+	padding-bottom: 52.5%; /* 16:~8.4 aspect ratio */
+}
+
+.wah-image a {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.wah-image img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.4s ease;
+}
+
+.wah-card:hover .wah-image img {
+	transform: scale(1.03);
+}
+
+/* Content area */
+.wah-content {
+	padding: 20px 24px 16px;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+.wah-single .wah-content {
+	padding: 24px 32px 16px;
+}
+
+/* Source label (overtitle) */
+.wah-overtitle {
+	color: #828282;
+	font-size: 12px;
+	margin-bottom: 8px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+/* Title */
+.wah-title {
+	font-family: "Libre Baskerville", Georgia, serif;
+	font-weight: 700;
+	font-size: 20px;
+	margin: 0 0 12px;
+	line-height: 1.3;
+	color: #191919;
+}
+
+.wah-single .wah-title {
+	font-size: 28px;
+	margin-bottom: 16px;
+}
+
+.wah-title a {
+	color: #191919;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.wah-title a:hover {
+	color: #019bca;
+}
+
+/* Description */
+.wah-description {
+	color: #4f4f4f;
+	font-size: 14px;
+	line-height: 1.6;
+	margin: 0 0 16px;
+	flex-grow: 1;
+}
+
+.wah-single .wah-description {
+	font-size: 16px;
+	margin-bottom: 20px;
+}
+
+/* Meta row */
+.wah-meta {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 13px;
+	color: #828282;
+	padding-top: 16px;
+	border-top: 1px solid #e5e5e5;
+	margin-top: auto;
+}
+
+.wah-date {
+	font-weight: 600;
+}
+
+/* CTA button */
+.wah-button {
+	font-family: "Open Sans", sans-serif;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 12px;
+	color: #019bca;
+	border: 2px solid #019bca;
+	padding: 8px 16px;
+	transition: all 0.3s linear;
+	display: inline-block;
+	background: transparent;
+}
+
+.wah-button:hover {
+	color: #ffffff;
+	background-color: #019bca;
+	text-decoration: none;
+}
+
+/* Empty state */
+.wah-empty {
+	text-align: center;
+	padding: 40px;
+	color: #828282;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.wah-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.wah-content {
+		padding: 16px 20px 12px;
+	}
+
+	.wah-title {
+		font-size: 18px;
+	}
+
+	.wah-single .wah-title {
+		font-size: 22px;
+	}
+
+	.wah-meta {
+		flex-direction: column;
+		gap: 12px;
+		align-items: flex-start;
+	}
+
+	.wah-button {
+		width: 100%;
+		text-align: center;
+	}
+}
