@@ -60,7 +60,7 @@
 }
 
 .wah-embed .wah-card:hover {
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+	box-shadow: none !important;
 }
 
 /* Thumbnail */
@@ -174,8 +174,8 @@
 
 .wah-embed .wah-title a:hover,
 .wah-embed h3.wah-title a:hover {
-	color: #0070f3 !important;
-	text-decoration: none !important;
+	color: #191919 !important;
+	text-decoration: underline !important;
 }
 
 /* Description */
@@ -236,8 +236,8 @@
 	text-decoration: none !important;
 	font-weight: 600 !important;
 	font-size: 12px !important;
-	color: #0070f3 !important;
-	border: 2px solid #0070f3 !important;
+	color: #070708 !important;
+	border: 2px solid #f5c400 !important;
 	padding: 8px 16px !important;
 	transition: all 0.3s linear !important;
 	display: inline-block !important;
@@ -250,10 +250,10 @@
 
 .wah-embed a.wah-button:hover,
 .wah-embed a.wah-button:active {
-	color: #ffffff !important;
-	background-color: #0070f3 !important;
+	color: #070708 !important;
+	background-color: #f5c400 !important;
 	text-decoration: none !important;
-	border-color: #0070f3 !important;
+	border-color: #f5c400 !important;
 }
 
 /* Empty state */
