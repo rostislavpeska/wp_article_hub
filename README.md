@@ -1,5 +1,11 @@
 # WP Article Hub
 
+![WordPress 5.0+](https://img.shields.io/badge/WordPress-5.0%2B-blue?logo=wordpress)
+![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-purple?logo=php)
+![WPML Ready](https://img.shields.io/badge/WPML-Ready-green)
+![Polylang Ready](https://img.shields.io/badge/Polylang-Ready-green)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
+
 Multi-source article aggregator for WordPress. Combines RSS feeds and manual entries into a unified, responsive card grid via a single shortcode. Zero theme dependency — works with Divi, Elementor, Astra, GeneratePress, or any theme.
 
 ## How It Works
@@ -134,19 +140,27 @@ For RSS articles, images are extracted from:
 3. `<szn:image>` (Seznam feeds)
 4. First `<img>` tag in content
 
-## Translation
+## Multilingual Support (WPML / Polylang Ready)
 
-The plugin supports three translation methods:
+The plugin is fully compatible with WPML and Polylang out of the box.
+
+### Dates — Automatic Translation
+All dates use WordPress `date_i18n()` — month names, date formats, and locale-specific formatting are handled automatically. No configuration needed.
+- English: "March 26, 2026"
+- Czech: "26. března 2026"
+- German: "26. Marz 2026"
+
+### UI Strings
+The "Read" button label is translatable:
 
 | Method | How |
 |--------|-----|
-| **Polylang** | WP Admin → Languages → String translations → "WP Article Hub" group |
-| **WPML** | WPML → String Translation → domain `wp-article-hub` |
+| **Polylang** | Languages → String translations → group "WP Article Hub" |
+| **WPML** | String Translation → domain `wp-article-hub` |
 | **.po/.mo files** | Text domain: `wp-article-hub` |
 
-Translatable strings: "Read" (button label).
-
-Date formatting uses `date_i18n()` — automatically localized based on WordPress locale.
+### Manual Entries
+The `external_article` CPT works with both WPML and Polylang translation interfaces. Create separate entries per language, or use a single entry if the external article is language-agnostic.
 
 ## Requirements
 

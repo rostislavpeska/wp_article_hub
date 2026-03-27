@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Article Hub
- * Plugin URI:  https://github.com/rostislavpeska/wp-article-hub
+ * Plugin URI:  https://github.com/rostislavpeska/wp_article_hub
  * Description: Multi-source article aggregator. RSS feeds are cached live (no DB import). Manual entries (YouTube, Seznam, etc.) stored as CPT. Displays via shortcode [article_hub].
  * Version:     2.0.0
  * Author:      Rostislav Peška
