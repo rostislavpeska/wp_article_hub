@@ -40,13 +40,14 @@ Multi-source article aggregator for WordPress. Combines RSS feeds and manual ent
 ## Shortcode
 
 ```
-[article_hub]                          — 6 articles, grid layout, all sources
-[article_hub count="3"]                — limit to 3 articles
-[article_hub source="Medium"]          — filter by source name
-[article_hub layout="single"]          — single-column list layout
-[article_hub images="all"]             — show images on all layouts (grid + single)
-[article_hub images="none"]            — hide all images
-[article_hub count="1" layout="single" images="all"]  — featured single with image
+[article_hub]                                         — 6 articles, grid, all sources
+[article_hub count="3"]                               — limit to 3 articles
+[article_hub source="Medium"]                         — filter by source name
+[article_hub layout="single"]                         — single-column list (no images)
+[article_hub layout="single" images="all"]            — single-column list with images
+[article_hub images="none"]                           — hide all images
+[article_hub images="all"]                            — show images everywhere
+[article_hub count="1" layout="single" images="all"]  — featured single article with image
 ```
 
 ### `images` Parameter
