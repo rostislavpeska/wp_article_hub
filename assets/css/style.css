@@ -6,8 +6,7 @@
  * All rules scoped under .wah-embed for zero leakage.
  */
 
-/* CSS Layer — modern browsers: plugin styles override theme defaults cleanly */
-@layer wah-base {
+/* Default styles — overridable via Custom CSS in plugin settings */
 
 /* Reset — isolate from theme globals */
 .wah-embed,
@@ -267,7 +266,7 @@
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
-} /* end @layer */
+/* end default styles */
 
 /* Responsive */
 @media (max-width: 768px) {
