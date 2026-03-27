@@ -308,6 +308,15 @@ function wah_render_settings_page() {
 	<div class="wrap">
 		<h1><?php _e( 'Article Hub — Settings', 'wp-article-hub' ); ?></h1>
 
+		<div class="notice notice-info" style="padding: 12px 16px;">
+			<strong><?php _e( 'Shortcode:', 'wp-article-hub' ); ?></strong>
+			<code>[article_hub]</code> &mdash;
+			<?php _e( 'Options:', 'wp-article-hub' ); ?>
+			<code>[article_hub count="6"]</code>
+			<code>[article_hub source="Medium"]</code>
+			<code>[article_hub layout="single"]</code>
+		</div>
+
 		<form method="post" action="options.php">
 			<?php settings_fields( 'wah_display_settings' ); ?>
 
