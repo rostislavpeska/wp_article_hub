@@ -18,6 +18,15 @@
 }
 
 .wah-embed {
+	/* Override these in Custom CSS to rebrand — no !important needed */
+	--wah-accent: #00b5ff;
+	--wah-accent-text: #ffffff;
+	--wah-title-color: #191919;
+	--wah-text-color: #4f4f4f;
+	--wah-meta-color: #828282;
+	--wah-border-color: #e5e5e5;
+	--wah-card-bg: #ffffff;
+
 	all: initial;
 	display: block;
 	max-width: 100%;
@@ -25,7 +34,7 @@
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 	font-size: 14px !important;
 	line-height: 1.5 !important;
-	color: #4f4f4f !important;
+	color: var(--wah-text-color) !important;
 }
 
 /* Grid layout */
@@ -48,8 +57,8 @@
 
 /* Card */
 .wah-embed .wah-card {
-	background: #ffffff !important;
-	border: 1px solid #e5e5e5 !important;
+	background: var(--wah-card-bg) !important;
+	border: 1px solid var(--wah-border-color) !important;
 	transition: box-shadow 0.3s ease !important;
 	overflow: hidden !important;
 	display: flex !important;
@@ -129,7 +138,7 @@
 
 /* Source label (overtitle) */
 .wah-embed .wah-overtitle {
-	color: #828282 !important;
+	color: var(--wah-meta-color) !important;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 	font-size: 12px !important;
 	font-weight: 600 !important;
@@ -149,7 +158,7 @@
 	margin: 0 0 12px !important;
 	padding: 0 !important;
 	line-height: 1.3 !important;
-	color: #191919 !important;
+	color: var(--wah-title-color) !important;
 	letter-spacing: 0 !important;
 	text-transform: none !important;
 	border: none !important;
@@ -166,7 +175,7 @@
 .wah-embed h3.wah-title a,
 .wah-embed h3.wah-title a:link,
 .wah-embed h3.wah-title a:visited {
-	color: #191919 !important;
+	color: var(--wah-title-color) !important;
 	text-decoration: none !important;
 	transition: color 0.2s ease !important;
 	border: none !important;
@@ -176,14 +185,14 @@
 
 .wah-embed .wah-title a:hover,
 .wah-embed h3.wah-title a:hover {
-	color: #191919 !important;
+	color: var(--wah-title-color) !important;
 	text-decoration: underline !important;
 }
 
 /* Description */
 .wah-embed .wah-description,
 .wah-embed p.wah-description {
-	color: #4f4f4f !important;
+	color: var(--wah-text-color) !important;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 	font-size: 14px !important;
 	line-height: 1.6 !important;
@@ -205,7 +214,7 @@
 	align-items: center !important;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 	font-size: 13px !important;
-	color: #828282 !important;
+	color: var(--wah-meta-color) !important;
 	padding: 16px 0 0 !important;
 	border-top: 1px solid #e5e5e5 !important;
 	margin-top: auto !important;
@@ -216,12 +225,12 @@
 
 .wah-embed .wah-date {
 	font-weight: 600 !important;
-	color: #828282 !important;
+	color: var(--wah-meta-color) !important;
 }
 
 .wah-embed .wah-author {
 	font-weight: 400 !important;
-	color: #828282 !important;
+	color: var(--wah-meta-color) !important;
 }
 
 .wah-embed .wah-meta-sep {
@@ -238,8 +247,8 @@
 	text-decoration: none !important;
 	font-weight: 600 !important;
 	font-size: 12px !important;
-	color: #070708 !important;
-	border: 2px solid #00b5ff !important;
+	color: var(--wah-title-color) !important;
+	border: 2px solid var(--wah-accent) !important;
 	padding: 8px 16px !important;
 	transition: all 0.3s linear !important;
 	display: inline-block !important;
@@ -252,17 +261,17 @@
 
 .wah-embed a.wah-button:hover,
 .wah-embed a.wah-button:active {
-	color: #ffffff !important;
-	background-color: #00b5ff !important;
+	color: var(--wah-accent-text) !important;
+	background-color: var(--wah-accent) !important;
 	text-decoration: none !important;
-	border-color: #00b5ff !important;
+	border-color: var(--wah-accent) !important;
 }
 
 /* Empty state */
 .wah-embed .wah-empty {
 	text-align: center !important;
 	padding: 40px !important;
-	color: #828282 !important;
+	color: var(--wah-meta-color) !important;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
