@@ -67,6 +67,10 @@ function wah_import_feed( $url, $name = '' ) {
 
 		$pub_date = $item->get_date( 'Y-m-d' ) ?: current_time( 'Y-m-d' );
 
+		// Author from feed (dc:creator or author tag)
+		$author_obj = $item->get_author();
+		$author = $author_obj ? $author_obj->get_name() : '';
+
 		// Try to extract thumbnail from enclosure, media:content, or content
 		$thumb = '';
 		$enclosure = $item->get_enclosure();
@@ -109,6 +113,7 @@ function wah_import_feed( $url, $name = '' ) {
 		update_post_meta( $post_id, '_wah_url', esc_url_raw( $link ) );
 		update_post_meta( $post_id, '_wah_excerpt', $excerpt );
 		update_post_meta( $post_id, '_wah_source_name', $name );
+		update_post_meta( $post_id, '_wah_author', $author );
 		update_post_meta( $post_id, '_wah_published', $pub_date );
 		if ( $thumb ) {
 			update_post_meta( $post_id, '_wah_thumbnail_url', esc_url_raw( $thumb ) );

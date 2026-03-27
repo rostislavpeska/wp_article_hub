@@ -26,6 +26,7 @@ function wah_render_article_metabox( $post ) {
 	$url     = get_post_meta( $post->ID, '_wah_url', true );
 	$excerpt = get_post_meta( $post->ID, '_wah_excerpt', true );
 	$source  = get_post_meta( $post->ID, '_wah_source_name', true );
+	$author  = get_post_meta( $post->ID, '_wah_author', true );
 	$date    = get_post_meta( $post->ID, '_wah_published', true );
 	$thumb   = get_post_meta( $post->ID, '_wah_thumbnail_url', true );
 	?>
@@ -41,6 +42,11 @@ function wah_render_article_metabox( $post ) {
 		<tr>
 			<th><label for="wah_source_name"><?php _e( 'Source Name', 'wp-article-hub' ); ?></label></th>
 			<td><input type="text" id="wah_source_name" name="wah_source_name" value="<?php echo esc_attr( $source ); ?>" class="regular-text" placeholder="e.g. Medium, YouTube, AI Founders"></td>
+		</tr>
+		<tr>
+			<th><label for="wah_author"><?php _e( 'Author', 'wp-article-hub' ); ?></label></th>
+			<td><input type="text" id="wah_author" name="wah_author" value="<?php echo esc_attr( $author ); ?>" class="regular-text" placeholder="e.g. Rostislav Peška">
+			<p class="description"><?php _e( 'Auto-imported articles use the feed author. Manual entries: type the author name.', 'wp-article-hub' ); ?></p></td>
 		</tr>
 		<tr>
 			<th><label for="wah_published"><?php _e( 'Published Date', 'wp-article-hub' ); ?></label></th>
@@ -64,6 +70,7 @@ add_action( 'save_post_external_article', function ( $post_id ) {
 		'wah_url'           => '_wah_url',
 		'wah_excerpt'       => '_wah_excerpt',
 		'wah_source_name'   => '_wah_source_name',
+		'wah_author'        => '_wah_author',
 		'wah_published'     => '_wah_published',
 		'wah_thumbnail_url' => '_wah_thumbnail_url',
 	);
@@ -102,6 +109,16 @@ add_action( 'admin_init', function () {
 		'type'              => 'array',
 		'sanitize_callback' => 'wah_sanitize_feeds',
 		'default'           => array(),
+	) );
+	register_setting( 'wah_settings', 'wah_show_author', array(
+		'type'              => 'boolean',
+		'sanitize_callback' => 'rest_sanitize_boolean',
+		'default'           => false,
+	) );
+	register_setting( 'wah_settings', 'wah_custom_css', array(
+		'type'              => 'string',
+		'sanitize_callback' => 'wp_strip_all_tags',
+		'default'           => '',
 	) );
 } );
 
@@ -161,6 +178,32 @@ function wah_render_settings_page() {
 			</table>
 
 			<p><button type="button" class="button" id="wah-add-feed">+ <?php _e( 'Add Feed', 'wp-article-hub' ); ?></button></p>
+
+			<hr>
+
+			<h2><?php _e( 'Display Settings', 'wp-article-hub' ); ?></h2>
+
+			<table class="form-table">
+				<tr>
+					<th><?php _e( 'Show Author', 'wp-article-hub' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" name="wah_show_author" value="1" <?php checked( get_option( 'wah_show_author', false ) ); ?>>
+							<?php _e( 'Display author name on article cards', 'wp-article-hub' ); ?>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="wah_custom_css"><?php _e( 'Custom CSS', 'wp-article-hub' ); ?></label></th>
+					<td>
+						<textarea id="wah_custom_css" name="wah_custom_css" rows="10" class="large-text code" placeholder=".wah-embed .wah-title { font-size: 24px !important; }&#10;.wah-embed .wah-button { color: #ff0000 !important; }"><?php echo esc_textarea( get_option( 'wah_custom_css', '' ) ); ?></textarea>
+						<p class="description">
+							<?php _e( 'Override default styles. All selectors must start with <code>.wah-embed</code>. Use <code>!important</code> to override defaults.', 'wp-article-hub' ); ?>
+							<br><a href="https://github.com/rostislavpeska/wp-article-hub#custom-css" target="_blank" rel="noopener"><?php _e( 'CSS reference &rarr;', 'wp-article-hub' ); ?></a>
+						</p>
+					</td>
+				</tr>
+			</table>
 
 			<p>
 				<?php submit_button( __( 'Save Settings', 'wp-article-hub' ), 'primary', 'submit', false ); ?>

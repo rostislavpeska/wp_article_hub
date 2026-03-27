@@ -44,13 +44,28 @@ function wah_render_shortcode( $atts ) {
 		return '<p class="wah-empty">' . __( 'No articles found.', 'wp-article-hub' ) . '</p>';
 	}
 
-	// Enqueue styles
-	wp_enqueue_style( 'wah-style', WAH_URL . 'assets/css/style.css', array(), WAH_VERSION );
+	// Inline CSS — once per page, directly in output (immune to enqueue timing, caching, page builders)
+	static $css_printed = false;
+	$css_html = '';
+	if ( ! $css_printed ) {
+		$css_file = WAH_PATH . 'assets/css/style.css';
+		if ( file_exists( $css_file ) ) {
+			$css_html = '<style id="wah-inline-styles">' . file_get_contents( $css_file ) . '</style>';
+		}
+		// Custom CSS from settings
+		$custom_css = get_option( 'wah_custom_css', '' );
+		if ( $custom_css ) {
+			$css_html .= '<style id="wah-custom-styles">' . $custom_css . '</style>';
+		}
+		$css_printed = true;
+	}
+
+	$show_author = get_option( 'wah_show_author', false );
 
 	$is_grid = $atts['layout'] === 'grid' && $query->post_count > 1;
 	$wrapper_class = $is_grid ? 'wah-grid' : 'wah-single';
 
-	$html = '<div class="wah-embed"><div class="' . $wrapper_class . '">';
+	$html = $css_html . '<div class="wah-embed"><div class="' . $wrapper_class . '">';
 
 	while ( $query->have_posts() ) {
 		$query->the_post();
@@ -59,6 +74,7 @@ function wah_render_shortcode( $atts ) {
 		$url     = get_post_meta( $post_id, '_wah_url', true );
 		$excerpt = get_post_meta( $post_id, '_wah_excerpt', true );
 		$source  = get_post_meta( $post_id, '_wah_source_name', true );
+		$author  = get_post_meta( $post_id, '_wah_author', true );
 		$date    = get_post_meta( $post_id, '_wah_published', true );
 		$thumb   = '';
 
@@ -110,8 +126,15 @@ function wah_render_shortcode( $atts ) {
 		}
 
 		$html .= '<div class="wah-meta">';
+		$meta_parts = array();
+		if ( $show_author && $author ) {
+			$meta_parts[] = '<span class="wah-author">' . esc_html( $author ) . '</span>';
+		}
 		if ( $formatted_date ) {
-			$html .= '<span class="wah-date">' . esc_html( $formatted_date ) . '</span>';
+			$meta_parts[] = '<span class="wah-date">' . esc_html( $formatted_date ) . '</span>';
+		}
+		if ( ! empty( $meta_parts ) ) {
+			$html .= implode( ' <span class="wah-meta-sep">&middot;</span> ', $meta_parts );
 		}
 		$html .= '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer" class="wah-button">' . __( 'Read', 'wp-article-hub' ) . '</a>';
 		$html .= '</div>'; // .wah-meta
