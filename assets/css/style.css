@@ -42,6 +42,9 @@
 /* Single article layout */
 .wah-embed .wah-single {
 	max-width: 600px !important;
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 24px !important;
 }
 
 /* Card */
