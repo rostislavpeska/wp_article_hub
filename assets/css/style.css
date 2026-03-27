@@ -26,12 +26,16 @@
 	--wah-meta-color: #828282;
 	--wah-border-color: #e5e5e5;
 	--wah-card-bg: #ffffff;
+	--wah-btn-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	--wah-btn-color: var(--wah-accent);
+	--wah-title-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	--wah-body-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
 	all: initial;
 	display: block;
 	max-width: 100%;
 	margin: 20px 0;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: var(--wah-body-font) !important;
 	font-size: 14px !important;
 	line-height: 1.5 !important;
 	color: var(--wah-text-color) !important;
@@ -139,7 +143,7 @@
 /* Source label (overtitle) */
 .wah-embed .wah-overtitle {
 	color: var(--wah-meta-color) !important;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: var(--wah-body-font) !important;
 	font-size: 12px !important;
 	font-weight: 600 !important;
 	margin: 0 0 8px !important;
@@ -152,7 +156,7 @@
 /* Title */
 .wah-embed h3.wah-title,
 .wah-embed .wah-title {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: var(--wah-title-font) !important;
 	font-weight: 700 !important;
 	font-size: 20px !important;
 	margin: 0 0 12px !important;
@@ -193,7 +197,7 @@
 .wah-embed .wah-description,
 .wah-embed p.wah-description {
 	color: var(--wah-text-color) !important;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: var(--wah-body-font) !important;
 	font-size: 14px !important;
 	line-height: 1.6 !important;
 	margin: 0 0 16px !important;
@@ -212,7 +216,7 @@
 	display: flex !important;
 	justify-content: space-between !important;
 	align-items: center !important;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: var(--wah-body-font) !important;
 	font-size: 13px !important;
 	color: var(--wah-meta-color) !important;
 	padding: 16px 0 0 !important;
@@ -242,12 +246,12 @@
 .wah-embed a.wah-button,
 .wah-embed a.wah-button:link,
 .wah-embed a.wah-button:visited {
-	font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: var(--wah-btn-font) !important;
 	text-transform: uppercase !important;
 	text-decoration: none !important;
 	font-weight: 600 !important;
 	font-size: 12px !important;
-	color: var(--wah-title-color) !important;
+	color: var(--wah-btn-color) !important;
 	border: 2px solid var(--wah-accent) !important;
 	padding: 8px 16px !important;
 	transition: all 0.3s linear !important;
@@ -272,7 +276,7 @@
 	text-align: center !important;
 	padding: 40px !important;
 	color: var(--wah-meta-color) !important;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: var(--wah-body-font) !important;
 }
 
 /* end default styles */
