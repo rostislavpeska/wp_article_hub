@@ -208,8 +208,8 @@ function wah_render_settings_page() {
 			<p>
 				<?php submit_button( __( 'Save Settings', 'wp-article-hub' ), 'primary', 'submit', false ); ?>
 				&nbsp;
-				<button type="button" class="button" id="wah-import-now"><?php _e( 'Import Now', 'wp-article-hub' ); ?></button>
-				<span id="wah-import-status"></span>
+				<button type="button" class="button" id="wah-clear-cache"><?php _e( 'Clear RSS Cache', 'wp-article-hub' ); ?></button>
+				<span id="wah-cache-status"></span>
 			</p>
 		</form>
 	</div>
@@ -235,14 +235,14 @@ function wah_render_settings_page() {
 			}
 		});
 
-		// Import now (AJAX)
-		document.getElementById('wah-import-now').addEventListener('click', function() {
+		// Clear RSS cache
+		document.getElementById('wah-clear-cache').addEventListener('click', function() {
 			var btn = this;
-			var status = document.getElementById('wah-import-status');
+			var status = document.getElementById('wah-cache-status');
 			btn.disabled = true;
-			status.textContent = 'Importing...';
+			status.textContent = 'Clearing...';
 
-			fetch(ajaxurl + '?action=wah_import_now&_wpnonce=' + '<?php echo wp_create_nonce( "wah_import_now" ); ?>')
+			fetch(ajaxurl + '?action=wah_clear_cache&_wpnonce=' + '<?php echo wp_create_nonce( "wah_clear_cache" ); ?>')
 				.then(function(r) { return r.json(); })
 				.then(function(data) {
 					status.textContent = data.data || 'Done';
@@ -258,11 +258,11 @@ function wah_render_settings_page() {
 	<?php
 }
 
-// AJAX handler for "Import Now" button
-add_action( 'wp_ajax_wah_import_now', function () {
-	check_ajax_referer( 'wah_import_now', '_wpnonce' );
+// AJAX handler for "Clear RSS Cache" button
+add_action( 'wp_ajax_wah_clear_cache', function () {
+	check_ajax_referer( 'wah_clear_cache', '_wpnonce' );
 	if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
 
-	$count = wah_run_import();
-	wp_send_json_success( sprintf( __( 'Imported %d new articles.', 'wp-article-hub' ), $count ) );
+	delete_transient( 'wah_rss_articles' );
+	wp_send_json_success( __( 'Cache cleared. RSS feeds will refresh on next page load.', 'wp-article-hub' ) );
 } );
