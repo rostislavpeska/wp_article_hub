@@ -53,7 +53,7 @@
 
 /* Single article layout */
 .wah-embed .wah-single {
-	max-width: 600px !important;
+	max-width: 100% !important;
 	display: flex !important;
 	flex-direction: column !important;
 	gap: 24px !important;
