@@ -42,3 +42,10 @@ register_deactivation_hook( __FILE__, function () {
 
 // Hook cron action
 add_action( 'wah_import_feeds', 'wah_run_import' );
+
+// Register translatable strings with Polylang
+add_action( 'init', function () {
+	if ( function_exists( 'pll_register_string' ) ) {
+		pll_register_string( 'wah_read_button', 'Read', 'WP Article Hub' );
+	}
+} );

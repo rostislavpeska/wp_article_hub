@@ -136,7 +136,8 @@ function wah_render_shortcode( $atts ) {
 		if ( ! empty( $meta_parts ) ) {
 			$html .= implode( ' <span class="wah-meta-sep">&middot;</span> ', $meta_parts );
 		}
-		$html .= '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer" class="wah-button">' . __( 'Read', 'wp-article-hub' ) . '</a>';
+		$read_label = function_exists( 'pll__' ) ? pll__( 'Read' ) : __( 'Read', 'wp-article-hub' );
+		$html .= '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer" class="wah-button">' . esc_html( $read_label ) . '</a>';
 		$html .= '</div>'; // .wah-meta
 
 		$html .= '</div>'; // .wah-content
