@@ -40,12 +40,22 @@ Multi-source article aggregator for WordPress. Combines RSS feeds and manual ent
 ## Shortcode
 
 ```
-[article_hub]                     — 6 articles, grid layout, all sources
-[article_hub count="3"]           — limit to 3 articles
-[article_hub source="Medium"]     — filter by source name
-[article_hub layout="single"]     — single-column list layout
-[article_hub count="1" layout="single"]  — featured single article
+[article_hub]                          — 6 articles, grid layout, all sources
+[article_hub count="3"]                — limit to 3 articles
+[article_hub source="Medium"]          — filter by source name
+[article_hub layout="single"]          — single-column list layout
+[article_hub images="all"]             — show images on all layouts (grid + single)
+[article_hub images="none"]            — hide all images
+[article_hub count="1" layout="single" images="all"]  — featured single with image
 ```
+
+### `images` Parameter
+
+| Value | Behavior |
+|-------|----------|
+| `grid` | (default) Show images only in grid layout |
+| `all` | Show images in both grid and single layouts |
+| `none` | Hide images everywhere |
 
 Drop into any page builder: Divi Code Module, Elementor Shortcode widget, Gutenberg Shortcode block, or plain HTML.
 

@@ -156,7 +156,7 @@ function wah_get_manual_articles( $source_filter = '' ) {
 /**
  * Render a single article card.
  */
-function wah_render_card( $article, $is_grid, $show_author ) {
+function wah_render_card( $article, $is_grid, $show_author, $show_images = 'grid' ) {
 	$source_lower = strtolower( $article['source'] );
 	$source_class = 'wah-source--other';
 	if ( strpos( $source_lower, 'medium' ) !== false ) $source_class = 'wah-source--medium';
@@ -166,8 +166,9 @@ function wah_render_card( $article, $is_grid, $show_author ) {
 
 	$html = '<article class="wah-card ' . esc_attr( $source_class ) . '">';
 
-	// Thumbnail (grid only)
-	if ( $article['thumb'] && $is_grid ) {
+	// Thumbnail
+	$render_image = $article['thumb'] && ( $show_images === 'all' || ( $show_images === 'grid' && $is_grid ) );
+	if ( $render_image ) {
 		$html .= '<div class="wah-image">';
 		$html .= '<a href="' . esc_url( $article['url'] ) . '" target="_blank" rel="noopener noreferrer">';
 		$html .= '<img src="' . esc_url( $article['thumb'] ) . '" alt="' . esc_attr( $article['title'] ) . '" loading="lazy">';
@@ -226,6 +227,7 @@ function wah_render_shortcode( $atts ) {
 		'count'  => 6,
 		'source' => '',
 		'layout' => 'grid',
+		'images' => 'grid',  // 'grid' (default: grid only), 'all', 'none'
 	), $atts, 'article_hub' );
 
 	$count         = absint( $atts['count'] );
@@ -286,7 +288,7 @@ function wah_render_shortcode( $atts ) {
 	$html = $css_html . '<div class="wah-embed"><div class="' . $wrapper_class . '">';
 
 	foreach ( $all_articles as $article ) {
-		$html .= wah_render_card( $article, $is_grid, $show_author );
+		$html .= wah_render_card( $article, $is_grid, $show_author, $atts['images'] );
 	}
 
 	$html .= '</div></div>';

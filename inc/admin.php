@@ -320,6 +320,7 @@ function wah_render_settings_page() {
 			<code>[article_hub count="6"]</code>
 			<code>[article_hub source="Medium"]</code>
 			<code>[article_hub layout="single"]</code>
+			<code>[article_hub images="all"]</code>
 		</div>
 
 		<form method="post" action="options.php">
