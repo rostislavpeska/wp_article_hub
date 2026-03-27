@@ -179,6 +179,11 @@ add_action( 'admin_init', function () {
 		'sanitize_callback' => 'rest_sanitize_boolean',
 		'default'           => false,
 	) );
+	register_setting( 'wah_display_settings', 'wah_button_label', array(
+		'type'              => 'string',
+		'sanitize_callback' => 'sanitize_text_field',
+		'default'           => 'Read',
+	) );
 	register_setting( 'wah_display_settings', 'wah_custom_css', array(
 		'type'              => 'string',
 		'sanitize_callback' => 'wp_strip_all_tags',
@@ -328,6 +333,13 @@ function wah_render_settings_page() {
 							<input type="checkbox" name="wah_show_author" value="1" <?php checked( get_option( 'wah_show_author', false ) ); ?>>
 							<?php _e( 'Display author name on article cards', 'wp-article-hub' ); ?>
 						</label>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="wah_button_label"><?php _e( 'Button Label', 'wp-article-hub' ); ?></label></th>
+					<td>
+						<input type="text" id="wah_button_label" name="wah_button_label" value="<?php echo esc_attr( get_option( 'wah_button_label', 'Read' ) ); ?>" class="regular-text" placeholder="Read">
+						<p class="description"><?php _e( 'Base label for the CTA button. Polylang/WPML can override this per language.', 'wp-article-hub' ); ?></p>
 					</td>
 				</tr>
 				<tr>

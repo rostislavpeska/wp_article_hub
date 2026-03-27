@@ -200,7 +200,16 @@ function wah_render_card( $article, $is_grid, $show_author ) {
 	if ( ! empty( $meta_parts ) ) {
 		$html .= implode( ' <span class="wah-meta-sep">&middot;</span> ', $meta_parts );
 	}
-	$read_label = function_exists( 'pll__' ) ? pll__( 'Read' ) : __( 'Read', 'wp-article-hub' );
+	// Button label: Settings field → Polylang/WPML override if active
+		$base_label = get_option( 'wah_button_label', 'Read' );
+		$read_label = $base_label;
+		if ( function_exists( 'pll__' ) ) {
+			$translated = pll__( $base_label );
+			if ( $translated !== $base_label ) $read_label = $translated;
+		} elseif ( function_exists( '__' ) ) {
+			$translated = __( $base_label, 'wp-article-hub' );
+			if ( $translated !== $base_label ) $read_label = $translated;
+		}
 	$html .= '<a href="' . esc_url( $article['url'] ) . '" target="_blank" rel="noopener noreferrer" class="wah-button">' . esc_html( $read_label ) . '</a>';
 	$html .= '</div>'; // .wah-meta
 	$html .= '</div>'; // .wah-content

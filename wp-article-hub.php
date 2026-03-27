@@ -35,9 +35,10 @@ register_deactivation_hook( __FILE__, function () {
 	delete_transient( 'wah_rss_articles' );
 } );
 
-// Register translatable strings with Polylang
+// Register translatable strings with Polylang (uses saved label as base)
 add_action( 'init', function () {
 	if ( function_exists( 'pll_register_string' ) ) {
-		pll_register_string( 'wah_read_button', 'Read', 'WP Article Hub' );
+		$label = get_option( 'wah_button_label', 'Read' );
+		pll_register_string( 'wah_read_button', $label, 'WP Article Hub' );
 	}
 } );
