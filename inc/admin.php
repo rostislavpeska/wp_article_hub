@@ -53,9 +53,9 @@ function wah_render_article_metabox( $post ) {
 			<td><input type="date" id="wah_published" name="wah_published" value="<?php echo esc_attr( $date ); ?>"></td>
 		</tr>
 		<tr>
-			<th><label for="wah_thumbnail_url"><?php _e( 'Thumbnail URL', 'wp-article-hub' ); ?></label></th>
-			<td><input type="url" id="wah_thumbnail_url" name="wah_thumbnail_url" value="<?php echo esc_url( $thumb ); ?>" class="large-text" placeholder="https://... (optional — use Featured Image instead)">
-			<p class="description"><?php _e( 'External image URL. Prefer setting a Featured Image via the sidebar instead.', 'wp-article-hub' ); ?></p></td>
+			<th><label for="wah_thumbnail_url"><?php _e( 'Thumbnail URL (external)', 'wp-article-hub' ); ?></label></th>
+			<td><input type="url" id="wah_thumbnail_url" name="wah_thumbnail_url" value="<?php echo esc_url( $thumb ); ?>" class="large-text" placeholder="https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg">
+			<p class="description"><?php _e( 'For external images (YouTube thumbnails, etc.). For local images, use <strong>Featured Image</strong> in the sidebar instead — it uses the media gallery.', 'wp-article-hub' ); ?></p></td>
 		</tr>
 	</table>
 	<?php

@@ -237,7 +237,7 @@
 	font-weight: 600 !important;
 	font-size: 12px !important;
 	color: #070708 !important;
-	border: 2px solid #f5c400 !important;
+	border: 2px solid #00b5ff !important;
 	padding: 8px 16px !important;
 	transition: all 0.3s linear !important;
 	display: inline-block !important;
@@ -250,10 +250,10 @@
 
 .wah-embed a.wah-button:hover,
 .wah-embed a.wah-button:active {
-	color: #070708 !important;
-	background-color: #f5c400 !important;
+	color: #ffffff !important;
+	background-color: #00b5ff !important;
 	text-decoration: none !important;
-	border-color: #f5c400 !important;
+	border-color: #00b5ff !important;
 }
 
 /* Empty state */
