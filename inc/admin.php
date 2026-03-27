@@ -217,7 +217,7 @@ function wah_render_settings_page() {
 
 // AJAX handler for "Import Now" button
 add_action( 'wp_ajax_wah_import_now', function () {
-	check_ajax_referer( 'wah_import_now' );
+	check_ajax_referer( 'wah_import_now', '_wpnonce' );
 	if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
 
 	$count = wah_run_import();

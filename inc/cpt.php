@@ -39,7 +39,7 @@ function wah_register_cpt() {
 			'add_new_item'  => __( 'Add Source', 'wp-article-hub' ),
 		),
 		'public'       => false,
-		'show_ui'      => true,
+		'show_ui'      => false,
 		'show_in_rest' => true,
 		'hierarchical' => false,
 		'rewrite'      => false,
