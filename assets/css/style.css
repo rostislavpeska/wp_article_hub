@@ -231,7 +231,7 @@
 .wah-embed a.wah-button,
 .wah-embed a.wah-button:link,
 .wah-embed a.wah-button:visited {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 	text-transform: uppercase !important;
 	text-decoration: none !important;
 	font-weight: 600 !important;
