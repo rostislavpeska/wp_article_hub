@@ -6,6 +6,17 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /* ========================================================================
+   ENQUEUE WP MEDIA on article edit screens
+   ======================================================================== */
+
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+	global $post_type;
+	if ( $post_type === 'external_article' && in_array( $hook, array( 'post.php', 'post-new.php' ) ) ) {
+		wp_enqueue_media();
+	}
+} );
+
+/* ========================================================================
    META BOXES — article fields (external URL, excerpt, source, date)
    ======================================================================== */
 
@@ -53,11 +64,53 @@ function wah_render_article_metabox( $post ) {
 			<td><input type="date" id="wah_published" name="wah_published" value="<?php echo esc_attr( $date ); ?>"></td>
 		</tr>
 		<tr>
-			<th><label for="wah_thumbnail_url"><?php _e( 'Thumbnail URL (external)', 'wp-article-hub' ); ?></label></th>
-			<td><input type="url" id="wah_thumbnail_url" name="wah_thumbnail_url" value="<?php echo esc_url( $thumb ); ?>" class="large-text" placeholder="https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg">
-			<p class="description"><?php _e( 'For external images (YouTube thumbnails, etc.). For local images, use <strong>Featured Image</strong> in the sidebar instead — it uses the media gallery.', 'wp-article-hub' ); ?></p></td>
+			<th><?php _e( 'Image', 'wp-article-hub' ); ?></th>
+			<td>
+				<p><strong><?php _e( 'Option 1: Media Library', 'wp-article-hub' ); ?></strong></p>
+				<?php
+				$media_id = get_post_meta( $post->ID, '_wah_media_image', true );
+				$media_url = $media_id ? wp_get_attachment_image_url( $media_id, 'medium' ) : '';
+				?>
+				<div id="wah-media-preview" style="margin-bottom: 8px;">
+					<?php if ( $media_url ) : ?>
+						<img src="<?php echo esc_url( $media_url ); ?>" style="max-width: 300px; height: auto; display: block; margin-bottom: 8px;">
+					<?php endif; ?>
+				</div>
+				<input type="hidden" id="wah_media_image" name="wah_media_image" value="<?php echo esc_attr( $media_id ); ?>">
+				<button type="button" class="button" id="wah-select-image"><?php _e( 'Select Image', 'wp-article-hub' ); ?></button>
+				<?php if ( $media_id ) : ?>
+					<button type="button" class="button" id="wah-remove-image"><?php _e( 'Remove', 'wp-article-hub' ); ?></button>
+				<?php endif; ?>
+
+				<p style="margin-top: 16px;"><strong><?php _e( 'Option 2: External URL', 'wp-article-hub' ); ?></strong></p>
+				<input type="url" id="wah_thumbnail_url" name="wah_thumbnail_url" value="<?php echo esc_url( $thumb ); ?>" class="large-text" placeholder="https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg">
+				<p class="description"><?php _e( 'Media Library image takes priority over external URL.', 'wp-article-hub' ); ?></p>
+			</td>
 		</tr>
 	</table>
+	<script>
+	jQuery(function($) {
+		$('#wah-select-image').on('click', function(e) {
+			e.preventDefault();
+			var frame = wp.media({ title: 'Select Image', multiple: false, library: { type: 'image' } });
+			frame.on('select', function() {
+				var attachment = frame.state().get('selection').first().toJSON();
+				$('#wah_media_image').val(attachment.id);
+				$('#wah-media-preview').html('<img src="' + attachment.sizes.medium.url + '" style="max-width:300px;height:auto;display:block;margin-bottom:8px;">');
+				if (!$('#wah-remove-image').length) {
+					$('#wah-select-image').after(' <button type="button" class="button" id="wah-remove-image">Remove</button>');
+				}
+			});
+			frame.open();
+		});
+		$(document).on('click', '#wah-remove-image', function(e) {
+			e.preventDefault();
+			$('#wah_media_image').val('');
+			$('#wah-media-preview').html('');
+			$(this).remove();
+		});
+	});
+	</script>
 	<?php
 }
 
@@ -73,6 +126,7 @@ add_action( 'save_post_external_article', function ( $post_id ) {
 		'wah_author'        => '_wah_author',
 		'wah_published'     => '_wah_published',
 		'wah_thumbnail_url' => '_wah_thumbnail_url',
+		'wah_media_image'   => '_wah_media_image',
 	);
 
 	foreach ( $fields as $input => $meta_key ) {

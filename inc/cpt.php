@@ -10,7 +10,7 @@ add_action( 'init', 'wah_register_cpt' );
 function wah_register_cpt() {
 	register_post_type( 'external_article', array(
 		'labels' => array(
-			'name'               => __( 'Articles', 'wp-article-hub' ),
+			'name'               => __( 'Article Hub', 'wp-article-hub' ),
 			'singular_name'      => __( 'Article', 'wp-article-hub' ),
 			'add_new'            => __( 'Add Article', 'wp-article-hub' ),
 			'add_new_item'       => __( 'Add New Article', 'wp-article-hub' ),

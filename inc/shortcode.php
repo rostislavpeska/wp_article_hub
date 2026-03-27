@@ -124,8 +124,13 @@ function wah_get_manual_articles( $source_filter = '' ) {
 		$query->the_post();
 		$post_id = get_the_ID();
 
+		// Image priority: media library pick → featured image → external URL
 		$thumb = '';
-		if ( has_post_thumbnail( $post_id ) ) {
+		$media_id = get_post_meta( $post_id, '_wah_media_image', true );
+		if ( $media_id ) {
+			$thumb = wp_get_attachment_image_url( $media_id, 'medium_large' );
+		}
+		if ( ! $thumb && has_post_thumbnail( $post_id ) ) {
 			$thumb = get_the_post_thumbnail_url( $post_id, 'medium_large' );
 		}
 		if ( ! $thumb ) {
