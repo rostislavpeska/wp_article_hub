@@ -96,8 +96,16 @@ add_action( 'save_post_external_article', function ( $post_id ) {
 add_action( 'admin_menu', function () {
 	add_submenu_page(
 		'edit.php?post_type=external_article',
-		__( 'Feed Settings', 'wp-article-hub' ),
-		__( 'Feed Settings', 'wp-article-hub' ),
+		__( 'RSS Feeds', 'wp-article-hub' ),
+		__( 'RSS Feeds', 'wp-article-hub' ),
+		'manage_options',
+		'wah-feeds',
+		'wah_render_feeds_page'
+	);
+	add_submenu_page(
+		'edit.php?post_type=external_article',
+		__( 'Settings', 'wp-article-hub' ),
+		__( 'Settings', 'wp-article-hub' ),
 		'manage_options',
 		'wah-settings',
 		'wah_render_settings_page'
@@ -105,17 +113,19 @@ add_action( 'admin_menu', function () {
 } );
 
 add_action( 'admin_init', function () {
-	register_setting( 'wah_settings', 'wah_feeds', array(
+	// RSS Feeds page
+	register_setting( 'wah_feeds_settings', 'wah_feeds', array(
 		'type'              => 'array',
 		'sanitize_callback' => 'wah_sanitize_feeds',
 		'default'           => array(),
 	) );
-	register_setting( 'wah_settings', 'wah_show_author', array(
+	// Settings page
+	register_setting( 'wah_display_settings', 'wah_show_author', array(
 		'type'              => 'boolean',
 		'sanitize_callback' => 'rest_sanitize_boolean',
 		'default'           => false,
 	) );
-	register_setting( 'wah_settings', 'wah_custom_css', array(
+	register_setting( 'wah_display_settings', 'wah_custom_css', array(
 		'type'              => 'string',
 		'sanitize_callback' => 'wp_strip_all_tags',
 		'default'           => '',
@@ -137,17 +147,20 @@ function wah_sanitize_feeds( $input ) {
 	return $clean;
 }
 
-function wah_render_settings_page() {
+/* ========================================================================
+   RSS FEEDS PAGE
+   ======================================================================== */
+
+function wah_render_feeds_page() {
 	$feeds = get_option( 'wah_feeds', array() );
 	?>
 	<div class="wrap">
-		<h1><?php _e( 'Article Hub — Feed Settings', 'wp-article-hub' ); ?></h1>
+		<h1><?php _e( 'Article Hub — RSS Feeds', 'wp-article-hub' ); ?></h1>
 
 		<form method="post" action="options.php">
-			<?php settings_fields( 'wah_settings' ); ?>
+			<?php settings_fields( 'wah_feeds_settings' ); ?>
 
-			<h2><?php _e( 'RSS Feeds (auto-import)', 'wp-article-hub' ); ?></h2>
-			<p class="description"><?php _e( 'Articles from these feeds are imported automatically twice daily.', 'wp-article-hub' ); ?></p>
+			<p class="description"><?php _e( 'RSS articles are fetched live and cached for 6 hours. No database import — articles stay at the source.', 'wp-article-hub' ); ?></p>
 
 			<table class="widefat" id="wah-feeds-table">
 				<thead>
@@ -179,34 +192,8 @@ function wah_render_settings_page() {
 
 			<p><button type="button" class="button" id="wah-add-feed">+ <?php _e( 'Add Feed', 'wp-article-hub' ); ?></button></p>
 
-			<hr>
-
-			<h2><?php _e( 'Display Settings', 'wp-article-hub' ); ?></h2>
-
-			<table class="form-table">
-				<tr>
-					<th><?php _e( 'Show Author', 'wp-article-hub' ); ?></th>
-					<td>
-						<label>
-							<input type="checkbox" name="wah_show_author" value="1" <?php checked( get_option( 'wah_show_author', false ) ); ?>>
-							<?php _e( 'Display author name on article cards', 'wp-article-hub' ); ?>
-						</label>
-					</td>
-				</tr>
-				<tr>
-					<th><label for="wah_custom_css"><?php _e( 'Custom CSS', 'wp-article-hub' ); ?></label></th>
-					<td>
-						<textarea id="wah_custom_css" name="wah_custom_css" rows="10" class="large-text code" placeholder=".wah-embed .wah-title { font-size: 24px !important; }&#10;.wah-embed .wah-button { color: #ff0000 !important; }"><?php echo esc_textarea( get_option( 'wah_custom_css', '' ) ); ?></textarea>
-						<p class="description">
-							<?php _e( 'Override default styles. All selectors must start with <code>.wah-embed</code>. Use <code>!important</code> to override defaults.', 'wp-article-hub' ); ?>
-							<br><a href="https://github.com/rostislavpeska/wp-article-hub#custom-css" target="_blank" rel="noopener"><?php _e( 'CSS reference &rarr;', 'wp-article-hub' ); ?></a>
-						</p>
-					</td>
-				</tr>
-			</table>
-
 			<p>
-				<?php submit_button( __( 'Save Settings', 'wp-article-hub' ), 'primary', 'submit', false ); ?>
+				<?php submit_button( __( 'Save Feeds', 'wp-article-hub' ), 'primary', 'submit', false ); ?>
 				&nbsp;
 				<button type="button" class="button" id="wah-clear-cache"><?php _e( 'Clear RSS Cache', 'wp-article-hub' ); ?></button>
 				<span id="wah-cache-status"></span>
@@ -255,6 +242,46 @@ function wah_render_settings_page() {
 		});
 	})();
 	</script>
+	<?php
+}
+
+/* ========================================================================
+   SETTINGS PAGE (Display + Custom CSS)
+   ======================================================================== */
+
+function wah_render_settings_page() {
+	?>
+	<div class="wrap">
+		<h1><?php _e( 'Article Hub — Settings', 'wp-article-hub' ); ?></h1>
+
+		<form method="post" action="options.php">
+			<?php settings_fields( 'wah_display_settings' ); ?>
+
+			<table class="form-table">
+				<tr>
+					<th><?php _e( 'Show Author', 'wp-article-hub' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" name="wah_show_author" value="1" <?php checked( get_option( 'wah_show_author', false ) ); ?>>
+							<?php _e( 'Display author name on article cards', 'wp-article-hub' ); ?>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="wah_custom_css"><?php _e( 'Custom CSS', 'wp-article-hub' ); ?></label></th>
+					<td>
+						<textarea id="wah_custom_css" name="wah_custom_css" rows="12" class="large-text code" placeholder=".wah-embed .wah-title { font-size: 24px !important; }&#10;.wah-embed .wah-button { color: #ff0000 !important; }"><?php echo esc_textarea( get_option( 'wah_custom_css', '' ) ); ?></textarea>
+						<p class="description">
+							<?php _e( 'Override default styles. All selectors must start with <code>.wah-embed</code>. Use <code>!important</code> to override defaults.', 'wp-article-hub' ); ?>
+							<br><a href="https://github.com/rostislavpeska/wp-article-hub#custom-css" target="_blank" rel="noopener"><?php _e( 'CSS reference &rarr;', 'wp-article-hub' ); ?></a>
+						</p>
+					</td>
+				</tr>
+			</table>
+
+			<?php submit_button( __( 'Save Settings', 'wp-article-hub' ) ); ?>
+		</form>
+	</div>
 	<?php
 }
 
