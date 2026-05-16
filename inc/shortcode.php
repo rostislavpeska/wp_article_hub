@@ -20,8 +20,44 @@ add_shortcode( 'article_hub', 'wah_render_shortcode' );
  * Fetch RSS articles from all active feeds, cached in transients.
  * Returns normalized array of article data.
  */
+/**
+ * Current site language as a short slug (e.g. "en", "cs").
+ * Polylang → WPML → site locale fallback. Agnostic of the multilingual
+ * plugin in use; returns '' only if nothing can be determined.
+ */
+function wah_current_site_lang() {
+	if ( function_exists( 'pll_current_language' ) ) {
+		$l = pll_current_language( 'slug' );
+		if ( $l ) {
+			return strtolower( $l );
+		}
+	}
+	if ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE ) {
+		return strtolower( ICL_LANGUAGE_CODE );
+	}
+	return strtolower( substr( (string) get_locale(), 0, 2 ) );
+}
+
+/**
+ * Cache version. Bumped (not deleted) to invalidate every per-language
+ * cache variant at once — see wah_bump_cache().
+ */
+function wah_cache_version() {
+	return (string) get_option( 'wah_cache_ver', '1' );
+}
+
+/**
+ * Invalidate all RSS caches across every language version.
+ */
+function wah_bump_cache() {
+	update_option( 'wah_cache_ver', (string) time(), false );
+}
+
 function wah_get_rss_articles() {
-	$cache_key = 'wah_rss_articles';
+	// Per-language + versioned cache: CZ and EN site versions must not
+	// share a cache, or a feed bound to one language would leak into the
+	// other. Clearing the cache bumps the version (see wah_bump_cache).
+	$cache_key = 'wah_rss_articles_' . wah_cache_version() . '_' . wah_current_site_lang();
 	$cached    = get_transient( $cache_key );
 	if ( false !== $cached ) {
 		return $cached;
@@ -32,8 +68,17 @@ function wah_get_rss_articles() {
 	$feeds    = get_option( 'wah_feeds', array() );
 	$articles = array();
 
+	$site_lang = wah_current_site_lang();
+
 	foreach ( $feeds as $feed ) {
 		if ( empty( $feed['active'] ) || empty( $feed['url'] ) ) continue;
+
+		// Per-feed language binding. 'all' (or empty) = show on every
+		// language version; otherwise only on the matching site language.
+		$feed_lang = isset( $feed['lang'] ) ? strtolower( $feed['lang'] ) : 'all';
+		if ( 'all' !== $feed_lang && '' !== $feed_lang && $feed_lang !== $site_lang ) {
+			continue;
+		}
 
 		$rss = fetch_feed( $feed['url'] );
 		if ( is_wp_error( $rss ) ) continue;
@@ -210,6 +255,13 @@ function wah_render_card( $article, $is_grid, $show_author, $show_images = 'grid
 		} elseif ( function_exists( '__' ) ) {
 			$translated = __( $base_label, 'wp-article-hub' );
 			if ( $translated !== $base_label ) $read_label = $translated;
+		}
+		// Hardcoded Czech override — WPML/Polylang string translation for
+		// this option proved unreliable on the live site. The Czech site
+		// version always shows the Czech label; other languages keep the
+		// settings/option value.
+		if ( in_array( wah_current_site_lang(), array( 'cs', 'cz' ), true ) ) {
+			$read_label = 'Číst';
 		}
 	$html .= '<a href="' . esc_url( $article['url'] ) . '" target="_blank" rel="noopener noreferrer" class="wah-button">' . esc_html( $read_label ) . '</a>';
 	$html .= '</div>'; // .wah-meta

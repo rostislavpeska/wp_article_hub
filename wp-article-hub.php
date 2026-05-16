@@ -33,6 +33,7 @@ register_activation_hook( __FILE__, function () {
 register_deactivation_hook( __FILE__, function () {
 	flush_rewrite_rules();
 	delete_transient( 'wah_rss_articles' );
+	delete_option( 'wah_cache_ver' );
 } );
 
 // Register translatable strings with Polylang (uses saved label as base)

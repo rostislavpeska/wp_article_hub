@@ -197,13 +197,35 @@ function wah_sanitize_feeds( $input ) {
 	$clean = array();
 	foreach ( $input as $feed ) {
 		if ( empty( $feed['url'] ) ) continue;
+		$lang = sanitize_key( $feed['lang'] ?? 'all' );
 		$clean[] = array(
 			'url'    => esc_url_raw( $feed['url'] ),
 			'name'   => sanitize_text_field( $feed['name'] ?? '' ),
 			'active' => ! empty( $feed['active'] ),
+			'lang'   => $lang ?: 'all',
 		);
 	}
 	return $clean;
+}
+
+/**
+ * Site language slugs for the per-feed Language picker. Agnostic:
+ * Polylang → WPML → site-locale fallback. 'all' is added in the UI.
+ */
+function wah_site_language_slugs() {
+	$slugs = array();
+	if ( function_exists( 'pll_languages_list' ) ) {
+		$slugs = (array) pll_languages_list( array( 'fields' => 'slug' ) );
+	} elseif ( has_filter( 'wpml_active_languages' ) ) {
+		$langs = apply_filters( 'wpml_active_languages', null );
+		if ( is_array( $langs ) ) {
+			$slugs = array_keys( $langs );
+		}
+	}
+	if ( empty( $slugs ) ) {
+		$slugs = array( strtolower( substr( (string) get_locale(), 0, 2 ) ) );
+	}
+	return array_values( array_unique( array_filter( array_map( 'strtolower', $slugs ) ) ) );
 }
 
 /* ========================================================================
@@ -211,7 +233,12 @@ function wah_sanitize_feeds( $input ) {
    ======================================================================== */
 
 function wah_render_feeds_page() {
-	$feeds = get_option( 'wah_feeds', array() );
+	$feeds     = get_option( 'wah_feeds', array() );
+	$wah_langs = wah_site_language_slugs();
+	$wah_js_lang_opts = '<option value=\"all\">' . esc_js( __( 'All languages', 'wp-article-hub' ) ) . '</option>';
+	foreach ( $wah_langs as $lc ) {
+		$wah_js_lang_opts .= '<option value=\"' . esc_js( $lc ) . '\">' . esc_js( strtoupper( $lc ) ) . '</option>';
+	}
 	?>
 	<div class="wrap">
 		<h1><?php _e( 'Article Hub — RSS Feeds', 'wp-article-hub' ); ?></h1>
@@ -227,6 +254,7 @@ function wah_render_feeds_page() {
 						<th><?php _e( 'Active', 'wp-article-hub' ); ?></th>
 						<th><?php _e( 'Source Name', 'wp-article-hub' ); ?></th>
 						<th><?php _e( 'Feed URL', 'wp-article-hub' ); ?></th>
+						<th><?php _e( 'Language', 'wp-article-hub' ); ?></th>
 						<th></th>
 					</tr>
 				</thead>
@@ -243,6 +271,15 @@ function wah_render_feeds_page() {
 						<td><input type="checkbox" name="wah_feeds[<?php echo $i; ?>][active]" value="1" <?php checked( $feed['active'] ?? false ); ?>></td>
 						<td><input type="text" name="wah_feeds[<?php echo $i; ?>][name]" value="<?php echo esc_attr( $feed['name'] ); ?>" class="regular-text"></td>
 						<td><input type="url" name="wah_feeds[<?php echo $i; ?>][url]" value="<?php echo esc_url( $feed['url'] ); ?>" class="large-text" placeholder="https://medium.com/feed/@username"></td>
+						<td>
+							<?php $sel = strtolower( $feed['lang'] ?? 'all' ); ?>
+							<select name="wah_feeds[<?php echo $i; ?>][lang]">
+								<option value="all" <?php selected( $sel, 'all' ); ?>><?php _e( 'All languages', 'wp-article-hub' ); ?></option>
+								<?php foreach ( $wah_langs as $lc ) : ?>
+									<option value="<?php echo esc_attr( $lc ); ?>" <?php selected( $sel, $lc ); ?>><?php echo esc_html( strtoupper( $lc ) ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</td>
 						<td><button type="button" class="button wah-remove-feed">&times;</button></td>
 					</tr>
 				<?php endforeach; ?>
@@ -270,6 +307,7 @@ function wah_render_feeds_page() {
 			tr.innerHTML = '<td><input type="checkbox" name="wah_feeds[' + idx + '][active]" value="1" checked></td>' +
 				'<td><input type="text" name="wah_feeds[' + idx + '][name]" value="" class="regular-text" placeholder="Source name"></td>' +
 				'<td><input type="url" name="wah_feeds[' + idx + '][url]" value="" class="large-text" placeholder="https://..."></td>' +
+				'<td><select name="wah_feeds[' + idx + '][lang]"><?php echo $wah_js_lang_opts; ?></select></td>' +
 				'<td><button type="button" class="button wah-remove-feed">&times;</button></td>';
 			tbody.appendChild(tr);
 		});
@@ -366,6 +404,7 @@ add_action( 'wp_ajax_wah_clear_cache', function () {
 	check_ajax_referer( 'wah_clear_cache', '_wpnonce' );
 	if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
 
-	delete_transient( 'wah_rss_articles' );
+	delete_transient( 'wah_rss_articles' ); // legacy single-key cache
+	wah_bump_cache();                       // invalidate all per-language variants
 	wp_send_json_success( __( 'Cache cleared. RSS feeds will refresh on next page load.', 'wp-article-hub' ) );
 } );

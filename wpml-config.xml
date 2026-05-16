@@ -1,0 +1,9 @@
+<wpml-config>
+  <admin-texts>
+    <!-- "Read" button label. WPML auto-translates the option output via
+         the option_wah_button_label filter, so no template change is
+         needed. Translate it under WPML → String Translation → the
+         "admin texts / wp-article-hub" context. -->
+    <key name="wah_button_label" />
+  </admin-texts>
+</wpml-config>
