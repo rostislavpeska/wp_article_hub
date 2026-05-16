@@ -40,6 +40,9 @@ function wah_render_article_metabox( $post ) {
 	$author  = get_post_meta( $post->ID, '_wah_author', true );
 	$date    = get_post_meta( $post->ID, '_wah_published', true );
 	$thumb   = get_post_meta( $post->ID, '_wah_thumbnail_url', true );
+	$lang    = get_post_meta( $post->ID, '_wah_lang', true );
+	$lang    = $lang ? strtolower( $lang ) : 'all';
+	$wah_langs = wah_site_language_slugs();
 	?>
 	<table class="form-table">
 		<tr>
@@ -62,6 +65,18 @@ function wah_render_article_metabox( $post ) {
 		<tr>
 			<th><label for="wah_published"><?php _e( 'Published Date', 'wp-article-hub' ); ?></label></th>
 			<td><input type="date" id="wah_published" name="wah_published" value="<?php echo esc_attr( $date ); ?>"></td>
+		</tr>
+		<tr>
+			<th><label for="wah_lang"><?php _e( 'Language', 'wp-article-hub' ); ?></label></th>
+			<td>
+				<select id="wah_lang" name="wah_lang">
+					<option value="all" <?php selected( $lang, 'all' ); ?>><?php _e( 'All languages', 'wp-article-hub' ); ?></option>
+					<?php foreach ( $wah_langs as $lc ) : ?>
+						<option value="<?php echo esc_attr( $lc ); ?>" <?php selected( $lang, $lc ); ?>><?php echo esc_html( strtoupper( $lc ) ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<p class="description"><?php _e( 'Show this article only on the matching site language version. "All languages" shows everywhere.', 'wp-article-hub' ); ?></p>
+			</td>
 		</tr>
 		<tr>
 			<th><?php _e( 'Image', 'wp-article-hub' ); ?></th>
@@ -127,6 +142,7 @@ add_action( 'save_post_external_article', function ( $post_id ) {
 		'wah_published'     => '_wah_published',
 		'wah_thumbnail_url' => '_wah_thumbnail_url',
 		'wah_media_image'   => '_wah_media_image',
+		'wah_lang'          => '_wah_lang',
 	);
 
 	foreach ( $fields as $input => $meta_key ) {
@@ -137,6 +153,9 @@ add_action( 'save_post_external_article', function ( $post_id ) {
 			}
 			if ( $meta_key === '_wah_excerpt' ) {
 				$value = sanitize_textarea_field( $_POST[ $input ] );
+			}
+			if ( $meta_key === '_wah_lang' ) {
+				$value = sanitize_key( $_POST[ $input ] ) ?: 'all';
 			}
 			update_post_meta( $post_id, $meta_key, $value );
 		}

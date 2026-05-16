@@ -169,6 +169,14 @@ function wah_get_manual_articles( $source_filter = '' ) {
 		$query->the_post();
 		$post_id = get_the_ID();
 
+		// Per-article language binding — same rule as feeds: 'all'/empty
+		// shows on every language version; otherwise only on the matching
+		// site language.
+		$art_lang = strtolower( (string) get_post_meta( $post_id, '_wah_lang', true ) );
+		if ( '' !== $art_lang && 'all' !== $art_lang && $art_lang !== wah_current_site_lang() ) {
+			continue;
+		}
+
 		// Image priority: media library pick → featured image → external URL
 		$thumb = '';
 		$media_id = get_post_meta( $post_id, '_wah_media_image', true );
