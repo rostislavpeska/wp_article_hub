@@ -48,7 +48,43 @@ Multi-source article aggregator for WordPress. Combines RSS feeds and manual ent
 [article_hub images="none"]                           — hide all images
 [article_hub images="all"]                            — show images everywhere
 [article_hub count="1" layout="single" images="all"]  — featured single article with image
+[article_hub owner_post_id="152"]                     — scope to an "owner" post (2.1.0)
 ```
+
+### Owner binding (2.1.0)
+
+`[article_hub owner_post_id="152"]` lets a theme scope the shortcode
+to feeds + manual articles "belonging to" any post — a persona, a
+project, a brand, anything. The plugin stays agnostic; the theme owns
+where that data lives, via two filter hooks:
+
+```php
+// Return {url, name, active} rows for the owner, or null to fall through.
+add_filter( 'wah_feeds_for_owner', function ( $default, $owner_post_id ) {
+    if ( get_post_type( $owner_post_id ) !== 'persona' ) return $default;
+    // e.g. read an ACF repeater on the persona post:
+    $rows = get_field( 'persona_rss_feeds', $owner_post_id ) ?: [];
+    return array_map( fn( $r ) => [
+        'url'    => $r['url'],
+        'name'   => $r['label'],
+        'active' => ! empty( $r['active'] ),
+    ], $rows );
+}, 10, 2 );
+
+// Return normalised article rows for the owner, or null to fall through.
+add_filter( 'wah_manual_articles_for_owner', function ( $default, $owner_post_id ) {
+    // e.g. query external_article CPT by an owner-binding meta:
+    return /* … */ null;
+}, 10, 2 );
+```
+
+If no filter is hooked, calls with `owner_post_id` fall through to the
+plugin's defaults — same as 2.0.0. Backward compatible.
+
+Cache: per-owner transient key (`wah_rss_articles_o{N}`), independent
+6h lifetime. "Clear RSS Cache" in admin sweeps all owner caches.
+
+See `docs/owner-binding.md` for the full spec.
 
 ### `images` Parameter
 

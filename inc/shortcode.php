@@ -17,19 +17,39 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 add_shortcode( 'article_hub', 'wah_render_shortcode' );
 
 /**
- * Fetch RSS articles from all active feeds, cached in transients.
- * Returns normalized array of article data.
+ * Fetch RSS articles for an owner (or globally), cached in transients.
+ *
+ * 2.1.0 — owner_post_id support. The feeds list is resolved through the
+ * `wah_feeds_for_owner` filter so themes can route per-owner queries to
+ * data stored anywhere (ACF repeater on the owner post, custom table,
+ * external API). The default — when the filter returns null OR
+ * owner_post_id is 0 — is the existing global `wah_feeds` option.
+ *
+ * Cache key is per-owner so different owners cache independently.
+ *
+ * @param int $owner_post_id 0 = global (legacy behaviour).
+ * @return array Normalised article rows.
  */
-function wah_get_rss_articles() {
-	$cache_key = 'wah_rss_articles';
-	$cached    = get_transient( $cache_key );
+function wah_get_rss_articles( $owner_post_id = 0 ) {
+	$owner_post_id = (int) $owner_post_id;
+	$cache_key     = $owner_post_id > 0
+		? 'wah_rss_articles_o' . $owner_post_id
+		: 'wah_rss_articles';   // legacy key preserved for the global case
+
+	$cached = get_transient( $cache_key );
 	if ( false !== $cached ) {
 		return $cached;
 	}
 
 	include_once ABSPATH . WPINC . '/feed.php';
 
-	$feeds    = get_option( 'wah_feeds', array() );
+	// Resolve the feed source. Filter returns NULL → fall through to the
+	// global wah_feeds option (2.0.0 behaviour).
+	$feeds = apply_filters( 'wah_feeds_for_owner', null, $owner_post_id );
+	if ( ! is_array( $feeds ) ) {
+		$feeds = get_option( 'wah_feeds', array() );
+	}
+
 	$articles = array();
 
 	foreach ( $feeds as $feed ) {
@@ -96,8 +116,26 @@ function wah_get_rss_articles() {
 
 /**
  * Get manual CPT articles, normalized to same format as RSS.
+ *
+ * 2.1.0 — owner_post_id support. The article list is resolved through
+ * `wah_manual_articles_for_owner` filter; if the filter returns a value
+ * (array of normalised rows), it wins. Otherwise the default fall-through
+ * is the existing WP_Query over the external_article CPT, unscoped.
+ *
+ * @param string $source_filter Optional source-name filter (legacy).
+ * @param int    $owner_post_id 0 = global (legacy behaviour).
+ * @return array Normalised article rows.
  */
-function wah_get_manual_articles( $source_filter = '' ) {
+function wah_get_manual_articles( $source_filter = '', $owner_post_id = 0 ) {
+	$owner_post_id = (int) $owner_post_id;
+
+	// Filter short-circuit. Implementer is expected to return already-
+	// normalised rows in the same shape this function would produce.
+	$filtered = apply_filters( 'wah_manual_articles_for_owner', null, $owner_post_id );
+	if ( is_array( $filtered ) ) {
+		return $filtered;
+	}
+
 	$args = array(
 		'post_type'      => 'external_article',
 		'post_status'    => 'publish',
@@ -224,18 +262,20 @@ function wah_render_card( $article, $is_grid, $show_author, $show_images = 'grid
  */
 function wah_render_shortcode( $atts ) {
 	$atts = shortcode_atts( array(
-		'count'  => 6,
-		'source' => '',
-		'layout' => 'grid',
-		'images' => 'grid',  // 'grid' (default: grid only), 'all', 'none'
+		'count'         => 6,
+		'source'        => '',
+		'layout'        => 'grid',
+		'images'        => 'grid',  // 'grid' (default: grid only), 'all', 'none'
+		'owner_post_id' => 0,        // 2.1.0 — scope to a specific owner post
 	), $atts, 'article_hub' );
 
 	$count         = absint( $atts['count'] );
 	$source_filter = $atts['source'];
+	$owner_post_id = absint( $atts['owner_post_id'] );
 
-	// Gather articles from both sources
-	$rss_articles    = wah_get_rss_articles();
-	$manual_articles = wah_get_manual_articles( $source_filter );
+	// Gather articles from both sources, scoped to the owner when set.
+	$rss_articles    = wah_get_rss_articles( $owner_post_id );
+	$manual_articles = wah_get_manual_articles( $source_filter, $owner_post_id );
 
 	// Filter RSS by source if specified
 	if ( $source_filter ) {

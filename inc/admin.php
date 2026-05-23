@@ -361,11 +361,16 @@ function wah_render_settings_page() {
 	<?php
 }
 
-// AJAX handler for "Clear RSS Cache" button
+// AJAX handler for "Clear RSS Cache" button.
+// 2.1.0: also sweeps every per-owner RSS cache transient (one per
+// owner_post_id), so admin doesn't have to clear each separately.
 add_action( 'wp_ajax_wah_clear_cache', function () {
 	check_ajax_referer( 'wah_clear_cache', '_wpnonce' );
 	if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
 
-	delete_transient( 'wah_rss_articles' );
+	delete_transient( 'wah_rss_articles' );          // legacy global key
+	if ( function_exists( 'wah_clear_all_owner_caches' ) ) {
+		wah_clear_all_owner_caches();                 // 2.1.0 per-owner keys
+	}
 	wp_send_json_success( __( 'Cache cleared. RSS feeds will refresh on next page load.', 'wp-article-hub' ) );
 } );
